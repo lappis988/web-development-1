@@ -16,3 +16,17 @@ p {
     line-height: 1.6;
     margin-bottom: 20px;
 }
+
+img {
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+a {
+    color:aquamarine;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
