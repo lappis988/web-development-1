@@ -51,6 +51,9 @@ animalForm.addEventListener("submit", function (event) {
             species: speciesValue,
             note: noteValue
         };
+
+        localStorage.setItem("ws05Animal", JSON.stringify(animalData));
+
         const jsonString = JSON.stringify(animalData, null, 2);
         formResult.textContent = `Success!\n${jsonString}`;
     }
@@ -67,10 +70,30 @@ const discountMessage = document.getElementById("discountMessage");
 sponsorForm.addEventListener("submit", function (event) {
     event.preventDefault();
     // TODO: Convert input values with Number().
+    const annualFee = Number(animalType.value);
+    const years = Number(yearsInput.value);
     // TODO: Muunna syötteet numeroiksi Number()-funktiolla.
+    if (!Number.isInteger(years) || years <= 0) {
+        cost.textContent = "Please enter a valid number of years.";
+        return;
+    }
     // TODO: Calculate the price and apply discounts.
+    let total = annualFee * years;
+    let appliedDiscountText = "";
+
+    if (years >= 5) {
+        total = (total * 0.80) - 5;
+        appliedDiscountText = "Discount applied: 20% off + €5 long-term bonus!";
+    }
+
+    else if (years > 2) {
+        total = total * 0.80;
+        appliedDiscountText = "Discount applied: 20% off for sponsoring over 2 years!";
+    }
     // TODO: Laske hinta ja alennukset.
     // TODO: Show the result / Näytä tulos.
+    cost.textContent = `Total: €${total.toFixed(2)}`;
+    discountMessage.textContent = appliedDiscountText;
 });
 
 // Exercise 4 / Harjoitus 4
@@ -80,16 +103,28 @@ const savedAnimal = document.getElementById("savedAnimal");
 
 function loadAnimal() {
     // TODO: Read ws05Animal. Handle null before using JSON.parse().
+    const storedData = localStorage.getItem("ws05Animal");
+
+    if (storedData === null) {
+        savedAnimal.textContent = "No saved animal yet.";
+        return;
+    }
     // TODO: Lue ws05Animal. Tarkista null ennen JSON.parse()-muunnosta.
+    const animal = JSON.parse(storedData);
     // TODO: Display name, species and note with textContent.
+    savedAnimal.textContent = `Name: ${animal.name} | Species: ${animal.species} | Note: ${animal.note}`;
     // TODO: Näytä nimi, laji ja muistio textContent-ominaisuudella.
 }
 
 loadButton.addEventListener("click", loadAnimal);
+
 clearButton.addEventListener("click", function () {
     // TODO: Remove ws05Animal and update the displayed result.
+    localStorage.removeItem("ws05Animal");
+    savedAnimal.textContent = "No saved animal yet.";
     // TODO: Poista ws05Animal ja päivitä sivulla näkyvä tulos.
 });
 
 // TODO: Call loadAnimal() here to restore data when the page opens.
+loadAnimal();
 // TODO: Kutsu loadAnimal() tässä, jotta tiedot palautuvat sivun avautuessa.
